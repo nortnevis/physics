@@ -26,6 +26,11 @@ add_executable(check_fp64_support check_fp64_support.cpp)
 target_precompile_headers(check_fp64_support REUSE_FROM pch)
 target_link_libraries(check_fp64_support PRIVATE pch)
 
+# Check max NDRange 
+add_executable(get_max_ndrange get_max_ndrange.cpp)
+target_precompile_headers(get_max_ndrange REUSE_FROM pch)
+target_link_libraries(get_max_ndrange PRIVATE pch)
+
 # Retrieve device and platform info using cpp wrapper
 add_executable(get_info_cpp get_info_cpp.cpp)
 target_precompile_headers(get_info_cpp REUSE_FROM pch)
