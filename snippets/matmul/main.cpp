@@ -51,9 +51,10 @@ void print(const std::vector<float> &mat, int rows, int cols) {
     }
 }
 
-void control_calc(const std::vector<float> &mat1, const std::vector<float> &mat2, std::vector<float> &result,
-                  const std::vector<int> &mat_sizes) {
+std::vector<float> control_calc(const std::vector<float> &mat1, const std::vector<float> &mat2,
+                                const std::vector<int> &mat_sizes) {
     namespace ch = std::chrono;
+    std::vector<float> result(mat_sizes.at(0) * mat_sizes.at(2));
     auto start = ch::steady_clock::now();
     for (int row_a = 0; row_a < mat_sizes.at(0); ++row_a) {
         for (int col_b = 0; col_b < mat_sizes.at(2); ++col_b) {
@@ -66,39 +67,74 @@ void control_calc(const std::vector<float> &mat1, const std::vector<float> &mat2
     }
     auto end = ch::steady_clock::now();
     std::println("Control on cpu calculation: {} ms", ch::duration_cast<ch::milliseconds>(end - start).count());
+    return result;
 }
 
-void gpu_calc(const std::vector<float> &mat1, const std::vector<float> &mat2, std::vector<float> result,
-              const std::vector<int> &mat_sizes, cl::Context &context, cl::Device &dev) {
+std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<float> &mat2,
+                            const std::vector<int> &mat_sizes) {
+    cl::Context context;
+    auto dev = ph::get_deivce(context, mode);
     auto program = ph::compile_kernel("matmul.cl", context, dev);
+    cl::Kernel kernel(program, "matmul");
+    cl::CommandQueue cmd_queue(context, dev);
+
+    cl::Buffer mat1_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat1.size() * sizeof(float), (void *)mat1.data());
+    cl::Buffer mat2_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat2.size() * sizeof(float), (void *)mat2.data());
+
+    std::vector<float> result(mat_sizes.at(0) * mat_sizes.at(2));
+    cl::Buffer result_buff(context, CL_MEM_HOST_PTR | CL_MEM_WRITE_ONLY, result.size() * sizeof(float),
+                           (void *)result.data());
+
+    kernel.setArg(0, mat1_buff);
+    kernel.setArg(1, mat2_buff);
+    kernel.setArg(2, result_buff);
+
+    cl::NDRange local_range;
+    cl::NDRange global_range;
+
+    cmd_queue.enqueueNDRangeKernel(kernel, cl::NullRange, local_range, global_range);
+    cmd_queue.finish();
+    cmd_queue.enqueueReadBuffer(result_buff, CL_TRUE, 0, sizeof(float) * result.size(), (void *)result.size());
+
+    return result;
+}
+
+bool is_equal(std::vector<float> &l, std::vector<float> &r) {
+    if (l.size() != r.size()) {
+        return false;
+    }
+    for (int i = 0; i < l.size(); ++i) {
+        if (l[i] != r[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 int main(int argc, const char *argv[]) {
     try {
         auto mat_sizes = parse_args(argc, argv);
 
-        cl::Context context;
-
-        auto dev = ph::get_deivce(context, mode);
-
         std::vector<float> mat1(mat_sizes.at(0) * mat_sizes.at(1));
         std::vector<float> mat2(mat_sizes.at(1) * mat_sizes.at(2));
-        std::vector<float> result(mat_sizes.at(0) * mat_sizes.at(2));
 
         init(mat1);
         init(mat2);
 
+        auto gpu_result = gpu_calc(mat1, mat2, mat_sizes);
+
         if (mat_sizes.at(0) * mat_sizes.at(1) * mat_sizes.at(2) < 1000) {
-            control_calc(mat1, mat2, result, mat_sizes);
+            auto cpu_result = control_calc(mat1, mat2, mat_sizes);
             std::println("\nVec1:");
             print(mat1, mat_sizes.at(0), mat_sizes.at(1));
             std::println("\nVec2:");
             print(mat2, mat_sizes.at(1), mat_sizes.at(2));
             std::println("\nProduct:");
-            print(result, mat_sizes.at(0), mat_sizes.at(2));
-        }
+            print(cpu_result, mat_sizes.at(0), mat_sizes.at(2));
 
-        gpu_calc(mat1, mat2, result, mat_sizes, context, dev);
+            auto eq = is_equal(cpu_result, gpu_result);
+            std::println("\nIs correct: {}", eq ? "true" : "false");
+        }
 
     } catch (const std::exception &e) {
         std::println("{}", e.what());
