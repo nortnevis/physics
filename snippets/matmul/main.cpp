@@ -1,8 +1,4 @@
-enum class Mode {
-    CPU,
-    GPU,
-    _count,
-} mode = Mode::GPU;
+static auto mode = ph::Mode::GPU;
 
 decltype(auto) parse_args(int argc, const char *argv[]) {
     std::vector mat_sizes{5, 5, 5};
@@ -20,12 +16,12 @@ decltype(auto) parse_args(int argc, const char *argv[]) {
             if (pos <= mat_max_args) {
                 are_sizes_sequential = false;
             }
-            mode = Mode::CPU;
+            mode = ph::Mode::CPU;
         } else if (arg == "--gpu") {
             if (pos <= mat_max_args) {
                 are_sizes_sequential = false;
             }
-            mode = Mode::GPU;
+            mode = ph::Mode::GPU;
         } else {
             throw std::runtime_error{std::format(error_msg, argv[pos], pos)};
         }
@@ -38,34 +34,6 @@ decltype(auto) parse_args(int argc, const char *argv[]) {
     std::println("");
 
     return mat_sizes;
-}
-
-cl::Device get_deivce(cl::Context &context) {
-    if (mode == Mode::GPU) {
-        context = cl::Context(CL_DEVICE_TYPE_GPU);
-    } else {
-        context = cl::Context(CL_DEVICE_TYPE_CPU);
-    }
-
-    auto *err = new cl_int{0};
-    auto dev_list = context.getInfo<CL_CONTEXT_DEVICES>(err);
-    if (*err != CL_SUCCESS || dev_list.empty()) {
-        throw std::runtime_error("No awailable compute device");
-    }
-    auto dev = dev_list.front();
-    auto dev_name = dev.getInfo<CL_DEVICE_NAME>(err);
-    if (*err != CL_SUCCESS) {
-        throw std::runtime_error("Couldn't get device name");
-    }
-    auto dev_vendor = dev.getInfo<CL_DEVICE_VENDOR>(err);
-    if (*err != CL_SUCCESS) {
-        throw std::runtime_error("Couldn't get device's vendor");
-    }
-
-    std::println("Device name: {}", dev_name);
-    std::println("Device's vendor: {}\n\n", dev_vendor);
-
-    return dev;
 }
 
 void init(std::vector<float> &mat) {
@@ -111,7 +79,7 @@ int main(int argc, const char *argv[]) {
 
         cl::Context context;
 
-        auto dev = get_deivce(context);
+        auto dev = ph::get_deivce(context, mode);
 
         std::vector<float> mat1(mat_sizes.at(0) * mat_sizes.at(1));
         std::vector<float> mat2(mat_sizes.at(1) * mat_sizes.at(2));

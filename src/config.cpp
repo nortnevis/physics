@@ -1,8 +1,8 @@
 #include "config.hpp"
 
-namespace phys {
+namespace ph {
 
 // Definition
 Config config{};
 
-} // namespace phys
+} // namespace ph
