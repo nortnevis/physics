@@ -15,7 +15,7 @@ enum class Mode {
     _count,
 };
 
-cl::Device get_deivce(cl::Context &context, Mode mode);
+cl::Device get_deivce(cl::Context &context, Mode mode = Mode::GPU);
 
 cl::Program compile_kernel(const std::filesystem::path &path, cl::Context &context, cl::Device &dev);
 
