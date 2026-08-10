@@ -47,6 +47,34 @@ bool is_number(std::string_view str) {
     return true;
 }
 
+cl::Device get_deivce(cl::Context &context, Mode mode) {
+    if (mode == Mode::GPU) {
+        context = cl::Context(CL_DEVICE_TYPE_GPU);
+    } else {
+        context = cl::Context(CL_DEVICE_TYPE_CPU);
+    }
+
+    auto *err = new cl_int{0};
+    auto dev_list = context.getInfo<CL_CONTEXT_DEVICES>(err);
+    if (*err != CL_SUCCESS || dev_list.empty()) {
+        throw std::runtime_error("No awailable compute device");
+    }
+    auto dev = dev_list.front();
+    auto dev_name = dev.getInfo<CL_DEVICE_NAME>(err);
+    if (*err != CL_SUCCESS) {
+        throw std::runtime_error("Couldn't get device name");
+    }
+    auto dev_vendor = dev.getInfo<CL_DEVICE_VENDOR>(err);
+    if (*err != CL_SUCCESS) {
+        throw std::runtime_error("Couldn't get device's vendor");
+    }
+
+    std::println("Device name: {}", dev_name);
+    std::println("Device's vendor: {}\n\n", dev_vendor);
+
+    return dev;
+}
+
 cl::Program compile_kernel(const std::filesystem::path &path, cl::Context &context, cl::Device &dev) {
     std::ifstream cl_file(path);
     if (!cl_file.is_open()) {
@@ -62,19 +90,6 @@ cl::Program compile_kernel(const std::filesystem::path &path, cl::Context &conte
 
     program.build({dev});
     cl_file.close();
-
-    auto binary = program.getInfo<CL_PROGRAM_BINARIES>().at(0);
-
-    if (!binary.empty()) {
-        auto out_name = path.stem() / ".cl_compiled";
-        std::ofstream out_file(out_name, std::ios::binary);
-        if (!cl_file.is_open()) {
-            std::println("Can't save compile OpenCL kernel code to the file. {}", out_name.string());
-        } else {
-            out_file.write(reinterpret_cast<const char *>(binary.data()), binary.size());
-            std::println("Successfully saved compiled OpenCL kernel code!");
-        }
-    }
 
     return program;
 }
