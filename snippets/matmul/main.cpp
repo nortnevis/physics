@@ -27,15 +27,7 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     cl::Kernel kernel(program, "matmul");
     cl::CommandQueue cmd_queue(context, dev);
 
-    std::vector<float> mat2_tns;
-    mat2_tns.reserve(mat2.size());
-    auto rows_num = mat_sizes.at(1);
-    auto cols_num = mat_sizes.at(2);
-    for (int j = 0; j < cols_num; ++j) {
-        for (int i = 0; i < rows_num; ++i) {
-            mat2_tns.push_back(mat2[i * rows_num + j]);
-        }
-    }
+    auto mat2_tns = transpose(mat2, mat_sizes.at(1), mat_sizes.at(2));
 
     cl::Buffer mat1_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat1.size() * sizeof(float), (void *)mat1.data());
     cl::Buffer mat2_tns_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat2_tns.size() * sizeof(float),
