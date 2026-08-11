@@ -41,8 +41,7 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     kernel.setArg(1, mat2_tns_buff);
     kernel.setArg(2, result_buff);
 
-    cl::NDRange local_range;
-    cl::NDRange global_range;
+    auto [local_range, global_range] = ph::get_task_ranges(dev, mat_sizes);
 
     cmd_queue.enqueueNDRangeKernel(kernel, cl::NullRange, local_range, global_range);
     cmd_queue.finish();
