@@ -1,55 +1,4 @@
-static auto mode = ph::Mode::GPU;
-
-decltype(auto) parse_args(int argc, const char *argv[]) {
-    std::vector mat_sizes{5, 5, 5};
-    constexpr std::string_view error_msg = "Unknown arg '{}' at pos {}!";
-    constexpr int mat_max_args = 3;
-    bool are_sizes_sequential = true;
-    for (int pos = 1; pos < argc; ++pos) {
-        std::string_view arg = argv[pos];
-        if (pos <= mat_max_args && are_sizes_sequential && ph::is_number(arg)) {
-            mat_sizes.at(pos - 1) = std::stoi(std::string(arg));
-        } else if (arg == "-h" || arg == "--help") {
-            std::println("Awailable args: ([dim1] [dim2] [dim3]) [--cpu] [--gpu] [--help] [-h]");
-            std::exit(0);
-        } else if (arg == "--cpu") {
-            if (pos <= mat_max_args) {
-                are_sizes_sequential = false;
-            }
-            mode = ph::Mode::CPU;
-        } else if (arg == "--gpu") {
-            if (pos <= mat_max_args) {
-                are_sizes_sequential = false;
-            }
-            mode = ph::Mode::GPU;
-        } else {
-            throw std::runtime_error{std::format(error_msg, argv[pos], pos)};
-        }
-    }
-
-    std::print("Sizes are: ");
-    for (const auto &s : mat_sizes) {
-        std::print("{} ", s);
-    }
-    std::println("");
-
-    return mat_sizes;
-}
-
-void init(std::vector<float> &mat) {
-    for (auto &el : mat) {
-        el = ph::rand_int(0, 10);
-    }
-}
-
-void print(const std::vector<float> &mat, int rows, int cols) {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            std::print("{} ", mat[i * rows + j]);
-        }
-        std::println("");
-    }
-}
+#include "other.hpp"
 
 std::vector<float> control_calc(const std::vector<float> &mat1, const std::vector<float> &mat2,
                                 const std::vector<int> &mat_sizes) {
@@ -78,15 +27,26 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     cl::Kernel kernel(program, "matmul");
     cl::CommandQueue cmd_queue(context, dev);
 
+    std::vector<float> mat2_tns;
+    mat2_tns.reserve(mat2.size());
+    auto rows_num = mat_sizes.at(1);
+    auto cols_num = mat_sizes.at(2);
+    for (int j = 0; j < cols_num; ++j) {
+        for (int i = 0; i < rows_num; ++i) {
+            mat2_tns.push_back(mat2[i * rows_num + j]);
+        }
+    }
+
     cl::Buffer mat1_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat1.size() * sizeof(float), (void *)mat1.data());
-    cl::Buffer mat2_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat2.size() * sizeof(float), (void *)mat2.data());
+    cl::Buffer mat2_tns_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat2_tns.size() * sizeof(float),
+                             (void *)mat2_tns.data());
 
     std::vector<float> result(mat_sizes.at(0) * mat_sizes.at(2));
     cl::Buffer result_buff(context, CL_MEM_HOST_PTR | CL_MEM_WRITE_ONLY, result.size() * sizeof(float),
                            (void *)result.data());
 
     kernel.setArg(0, mat1_buff);
-    kernel.setArg(1, mat2_buff);
+    kernel.setArg(1, mat2_tns_buff);
     kernel.setArg(2, result_buff);
 
     cl::NDRange local_range;
@@ -97,18 +57,6 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     cmd_queue.enqueueReadBuffer(result_buff, CL_TRUE, 0, sizeof(float) * result.size(), (void *)result.size());
 
     return result;
-}
-
-bool is_equal(std::vector<float> &l, std::vector<float> &r) {
-    if (l.size() != r.size()) {
-        return false;
-    }
-    for (int i = 0; i < l.size(); ++i) {
-        if (l[i] != r[i]) {
-            return false;
-        }
-    }
-    return true;
 }
 
 int main(int argc, const char *argv[]) {

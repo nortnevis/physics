@@ -37,7 +37,7 @@ target_precompile_headers(get_info_cpp REUSE_FROM pch)
 target_link_libraries(get_info_cpp PRIVATE pch)
 
 # Matrix multiplication
-add_executable(matmul matmul/main.cpp)
+add_executable(matmul matmul/main.cpp matmul/other.hpp matmul/other.cpp)
 target_precompile_headers(matmul REUSE_FROM pch)
 target_link_libraries(matmul PRIVATE pch)
 copy_cl(matmul/matmul.cl)
