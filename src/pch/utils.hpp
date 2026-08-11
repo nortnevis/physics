@@ -9,6 +9,8 @@ float rand_float(float a, float b);
 
 bool is_number(std::string_view str);
 
+int align(int x, int y);
+
 enum class Mode {
     CPU,
     GPU,

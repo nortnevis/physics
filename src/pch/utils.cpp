@@ -47,6 +47,11 @@ bool is_number(std::string_view str) {
     return true;
 }
 
+int align(int x, int y) {
+    // we use this formula to align x to y
+    return (x + y - 1) / y * y;
+}
+
 cl::Device get_deivce(cl::Context &context, Mode mode) {
     if (mode == Mode::GPU) {
         context = cl::Context(CL_DEVICE_TYPE_GPU);

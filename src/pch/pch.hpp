@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <atomic>
 #include <cassert>
 #include <cmath>
@@ -11,6 +12,7 @@
 #include <memory>
 #include <print>
 #include <random>
+#include <ranges>
 #include <sstream>
 #include <stop_token>
 #include <string>
