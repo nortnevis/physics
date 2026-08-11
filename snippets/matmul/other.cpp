@@ -64,3 +64,14 @@ bool is_equal(std::vector<float> &l, std::vector<float> &r) {
     }
     return true;
 }
+
+std::vector<float> transpose(const std::vector<float> &mat, int rows, int cols) {
+    std::vector<float> tns;
+    tns.reserve(mat.size());
+    for (int j = 0; j < cols; ++j) {
+        for (int i = 0; i < rows; ++i) {
+            tns.push_back(mat[i * rows + j]);
+        }
+    }
+    return tns;
+}
