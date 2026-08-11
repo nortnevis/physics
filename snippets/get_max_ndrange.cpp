@@ -8,5 +8,10 @@ int main(int, char **) {
     std::println("Max work group size: {}", wg_size);
     std::println("Max work items number: {}", wi_count);
 
+    auto [local, global] = ph::get_task_ranges(dev, {240, 618, 500});
+
+    std::println("Local ranges: {}", local);
+    std::println("Local ranges: {}", local);
+
     return 0;
 }

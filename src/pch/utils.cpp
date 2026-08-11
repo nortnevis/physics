@@ -104,7 +104,7 @@ cl::Device get_deivce(cl::Context &context, Mode mode) {
     }
 
     std::println("Device name: {}", dev_name);
-    std::println("Device's vendor: {}\n\n", dev_vendor);
+    std::println("Device's vendor: {}\n", dev_vendor);
 
     return dev;
 }
