@@ -11,7 +11,9 @@ bool is_number(std::string_view str);
 
 int align(int x, int y);
 
-std::tuple<cl::NDRange, cl::NDRange> get_task_ranges(const cl::Device &dev, const std::vector<int> &sizes);
+std::tuple<cl::NDRange, cl::NDRange> get_task_ndranges(const cl::Device &dev, const std::vector<int> &sizes);
+std::tuple<std::vector<size_t>, std::vector<size_t>> get_task_ranges(const cl::Device &dev,
+                                                                     const std::vector<int> &sizes);
 
 enum class Mode {
     CPU,
