@@ -32,14 +32,16 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     cl::Buffer mat1_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat1.size() * sizeof(float), (void *)mat1.data());
     cl::Buffer mat2_tns_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat2_tns.size() * sizeof(float),
                              (void *)mat2_tns.data());
-
+    cl::Buffer sizes_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat_sizes.size() * sizeof(int),
+                          (void *)mat_sizes.data());
     std::vector<float> result(mat_sizes.at(0) * mat_sizes.at(2));
     cl::Buffer result_buff(context, CL_MEM_HOST_PTR | CL_MEM_WRITE_ONLY, result.size() * sizeof(float),
                            (void *)result.data());
 
     kernel.setArg(0, mat1_buff);
     kernel.setArg(1, mat2_tns_buff);
-    kernel.setArg(2, result_buff);
+    kernel.setArg(2, sizes_buff);
+    kernel.setArg(3, result_buff);
 
     auto [local_range, global_range] = ph::get_task_ndranges(dev, mat_sizes);
 
