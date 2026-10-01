@@ -1,6 +1,5 @@
----
 CompileFlags:
-  Add: [ -std=c++23, -x, c++ ]
+  Add: [-std=c++23, -x, c++]
   CompilationDatabase: ./
 Diagnostics:
   MissingIncludes: None
@@ -15,11 +14,10 @@ InlayHints:
 If:
   PathMatch: .*\.(cl|h)$
 CompileFlags:
-  Add: [ -x, c ]
-  Remove: [ -std=c++23 ]
+  Add: [-x, c]
+  Remove: [-std=c++23]
 ---
 If:
-  PathMatch: src/main\.hpp
+  PathMatch: src/pch/pch\.hpp
 Diagnostics:
   UnusedIncludes: None
-...
