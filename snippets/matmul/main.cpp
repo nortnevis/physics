@@ -29,13 +29,14 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
 
     auto mat2_tns = transpose(mat2, mat_sizes.at(1), mat_sizes.at(2));
 
-    cl::Buffer mat1_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat1.size() * sizeof(float), (void *)mat1.data());
-    cl::Buffer mat2_tns_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat2_tns.size() * sizeof(float),
+    cl::Buffer mat1_buff(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, mat1.size() * sizeof(float),
+                         (void *)mat1.data());
+    cl::Buffer mat2_tns_buff(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, mat2_tns.size() * sizeof(float),
                              (void *)mat2_tns.data());
-    cl::Buffer sizes_buff(context, CL_MEM_HOST_PTR | CL_MEM_READ_ONLY, mat_sizes.size() * sizeof(int),
+    cl::Buffer sizes_buff(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, mat_sizes.size() * sizeof(int),
                           (void *)mat_sizes.data());
     std::vector<float> result(mat_sizes.at(0) * mat_sizes.at(2));
-    cl::Buffer result_buff(context, CL_MEM_HOST_PTR | CL_MEM_WRITE_ONLY, result.size() * sizeof(float),
+    cl::Buffer result_buff(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, result.size() * sizeof(float),
                            (void *)result.data());
 
     kernel.setArg(0, mat1_buff);
@@ -45,7 +46,7 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
 
     auto [local_range, global_range] = ph::get_task_ndranges(dev, mat_sizes);
 
-    cmd_queue.enqueueNDRangeKernel(kernel, cl::NullRange, local_range, global_range);
+    cmd_queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range);
     cmd_queue.finish();
     cmd_queue.enqueueReadBuffer(result_buff, CL_TRUE, 0, sizeof(float) * result.size(), (void *)result.size());
 
