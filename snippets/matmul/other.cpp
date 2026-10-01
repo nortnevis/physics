@@ -53,6 +53,44 @@ void print(const std::vector<float> &mat, int rows, int cols) {
     }
 }
 
+void save2file(const std::vector<float> &mat, int rows, int cols, std::filesystem::path path) {
+    assert(rows * cols == mat.size() && "rows*cols != mat.size()");
+    static_assert(sizeof(float) == 4 && "sizeof(float) != 4");
+    if (path.empty()) {
+        auto time_stamp = std::chrono::time_point_cast<std::chrono::seconds>(std::chrono::system_clock::now());
+        path = std::format("{0:%F}-{0:%H}-{0:%M}-{0:%S}.dot", time_stamp);
+    }
+    if (std::filesystem::exists(path)) {
+        for (int _ = 0; _ < 3; ++_) {
+            auto time_stamp = std::chrono::time_point_cast<std::chrono::seconds>(std::chrono::system_clock::now());
+            std::string new_path = std::format("{0:%F}-{0:%H}-{0:%M}-{0:%S}.dot", time_stamp);
+            if (!std::filesystem::exists(new_path)) {
+                path = new_path;
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                break;
+            } else if (_ == 2) {
+                throw std::system_error(std::make_error_code(std::errc::file_exists),
+                                        std::format("Can't save to '{}' file.", new_path).c_str());
+            }
+        }
+    }
+
+    std::ofstream file(path, std::ios::binary);
+    if (!file) {
+        throw std::system_error(std::make_error_code(std::errc::bad_file_descriptor),
+                                std::format("Can't open for write file '{}'.", path.string()).c_str());
+    }
+    size_t buff_size = 64 * 1024;
+    char *buff = new char[buff_size]{0};
+    file.rdbuf()->pubsetbuf(buff, buff_size);
+
+    file << (size_t)(rows) << (size_t)(cols);
+
+    file.write(reinterpret_cast<const char *>(mat.data()),
+               mat.size() * sizeof(std::decay_t<decltype(mat)>::value_type));
+    file.close();
+}
+
 bool is_equal(std::vector<float> &l, std::vector<float> &r) {
     if (l.size() != r.size()) {
         return false;
