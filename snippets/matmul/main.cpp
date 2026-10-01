@@ -44,11 +44,11 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     kernel.setArg(2, sizes_buff);
     kernel.setArg(3, result_buff);
 
-    auto [local_range, global_range] = ph::get_task_ndranges(dev, mat_sizes);
+    auto [local_range, global_range] = ph::get_task_ndranges(dev, std::vector(mat_sizes.at(0), mat_sizes.at(2)));
 
     cmd_queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range);
     cmd_queue.finish();
-    cmd_queue.enqueueReadBuffer(result_buff, CL_TRUE, 0, sizeof(float) * result.size(), (void *)result.size());
+    cmd_queue.enqueueReadBuffer(result_buff, CL_TRUE, 0, sizeof(float) * result.size(), (void *)result.data());
 
     return result;
 }
@@ -74,6 +74,8 @@ int main(int argc, const char *argv[]) {
             std::println("\nProduct:");
             print(cpu_result, mat_sizes.at(0), mat_sizes.at(2));
 
+            std::println("\nGPU Product:");
+            print(gpu_result, mat_sizes.at(0), mat_sizes.at(1));
             auto eq = is_equal(cpu_result, gpu_result);
             std::println("\nIs correct: {}", eq ? "true" : "false");
         }
