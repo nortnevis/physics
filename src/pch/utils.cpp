@@ -57,7 +57,7 @@ std::tuple<cl::NDRange, cl::NDRange> get_task_ndranges(const cl::Device &dev, co
     std::vector<size_t> locals;
     std::vector<size_t> globals;
     for (const auto &dim : sizes) {
-        auto wg_size = dim >= wg_max ? wg_max : dim;
+        auto wg_size = std::min(static_cast<unsigned long>(dim), wg_max);
         locals.push_back(wg_size);
         globals.push_back(ph::align(dim, wg_size));
     }
