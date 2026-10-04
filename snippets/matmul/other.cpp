@@ -104,10 +104,18 @@ bool is_equal(std::vector<float> &l, std::vector<float> &r) {
 }
 
 std::vector<float> transpose(const std::vector<float> &mat, int rows, int cols) {
+    std::println("rows: {}; cols: {}", rows, cols);
+    for (const auto &el : mat) {
+        std::print(" {}", el);
+    }
+    std::println("\nbegin transpose");
     std::vector<float> tns;
     tns.reserve(mat.size());
     for (int j = 0; j < cols; ++j) {
         for (int i = 0; i < rows; ++i) {
+            std::println("[{}][{}] <- [{}][{}]", j, i, i, j);
+            std::println("element: {}", i * cols + j);
+            std::println("value: {}", mat[i * cols + j]);
             tns.push_back(mat[i * cols + j]);
         }
     }

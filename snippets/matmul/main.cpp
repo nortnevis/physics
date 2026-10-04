@@ -39,6 +39,12 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     cl::Buffer result_buff(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, result.size() * sizeof(float),
                            (void *)result.data());
 
+    std::print("mat_sizes:");
+    for (const auto &sz : mat_sizes) {
+        std::print(" {}", sz);
+    }
+    std::println("");
+
     kernel.setArg(0, mat1_buff);
     kernel.setArg(1, mat2_tns_buff);
     kernel.setArg(2, sizes_buff);
@@ -46,15 +52,35 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
 
     auto [local_range, global_range] = ph::get_task_ndranges(dev, std::vector(mat_sizes.at(0), mat_sizes.at(2)));
 
+    std::println("Task ndragnes:");
+    std::println("local. dims: {}, size: {}", local_range.dimensions(), local_range.size());
+    std::println("global. dims: {}, size: {}", global_range.dimensions(), global_range.size());
+    std::print("local =");
+    const auto *local = local_range.get();
+    for (int i = 0; i < local_range.dimensions(); ++i) {
+        std::cout << " " << local[i];
+    }
+    std::cout << std::endl;
+    std::print("global =");
+    const auto *global = local_range.get();
+    for (int i = 0; i < local_range.dimensions(); ++i) {
+        std::cout << " " << global[i];
+    }
+    std::cout << std::endl;
+
     cmd_queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range);
+    std::println("{}", __LINE__);
     cmd_queue.finish();
+    std::println("{}", __LINE__);
     cmd_queue.enqueueReadBuffer(result_buff, CL_TRUE, 0, sizeof(float) * result.size(), (void *)result.data());
+    std::println("{}", __LINE__);
 
     return result;
 }
 
 int main(int argc, const char *argv[]) {
     try {
+        ph::seed(1);
         auto mat_sizes = parse_args(argc, argv);
 
         std::vector<float> mat1(mat_sizes.at(0) * mat_sizes.at(1));
@@ -65,6 +91,7 @@ int main(int argc, const char *argv[]) {
 
         auto gpu_result = gpu_calc(mat1, mat2, mat_sizes);
 
+        std::println("{}", __LINE__);
         if (mat_sizes.at(0) * mat_sizes.at(1) * mat_sizes.at(2) < 1000) {
             auto cpu_result = control_calc(mat1, mat2, mat_sizes);
             std::println("\nVec1:");
