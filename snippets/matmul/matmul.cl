@@ -3,7 +3,8 @@ __kernel void matmul(__global float* mat1, __global float* mat2_tns, __global in
 	int k = get_global_id(1);
 	if (i < sizes[0] && k < sizes[2]) {
 		for (int j = 0; j < sizes[1]; ++j) {
-			result[i * sizes[0] + j] = result[i * sizes[0] + j] + mat1[i * sizes[0] + j] * mat2_tns[k * sizes[2] + j];
+			float dot = mat1[i * sizes[1] + j] * mat2_tns[k + sizes[2] * j];
+			result[i * sizes[2] + j] = result[i * sizes[2] + j] + dot;
 		}
 	}
 }

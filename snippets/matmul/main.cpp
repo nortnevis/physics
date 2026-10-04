@@ -9,9 +9,9 @@ std::vector<float> control_calc(const std::vector<float> &mat1, const std::vecto
         for (int col_b = 0; col_b < mat_sizes.at(2); ++col_b) {
             float sum = 0;
             for (int el = 0; el < mat_sizes.at(1); ++el) {
-                sum += mat1[el + row_a * mat_sizes.at(0)] * mat2[col_b + el * mat_sizes.at(1)];
+                sum += mat1[el + row_a * mat_sizes.at(1)] * mat2[col_b + el * mat_sizes.at(2)];
             }
-            result[row_a * mat_sizes.at(0) + col_b] = sum;
+            result[row_a * mat_sizes.at(2) + col_b] = sum;
         }
     }
     auto end = ch::steady_clock::now();

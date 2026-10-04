@@ -47,7 +47,7 @@ void init(std::vector<float> &mat) {
 void print(const std::vector<float> &mat, int rows, int cols) {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            std::print("{} ", mat[i * rows + j]);
+            std::print("{} ", mat[i * cols + j]);
         }
         std::println("");
     }
@@ -108,7 +108,7 @@ std::vector<float> transpose(const std::vector<float> &mat, int rows, int cols) 
     tns.reserve(mat.size());
     for (int j = 0; j < cols; ++j) {
         for (int i = 0; i < rows; ++i) {
-            tns.push_back(mat[i * rows + j]);
+            tns.push_back(mat[i * cols + j]);
         }
     }
     return tns;
