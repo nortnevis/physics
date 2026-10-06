@@ -102,7 +102,7 @@ int main(int argc, const char *argv[]) {
             print(cpu_result, mat_sizes.at(0), mat_sizes.at(2));
 
             std::println("\nGPU Product:");
-            print(gpu_result, mat_sizes.at(0), mat_sizes.at(1));
+            print(gpu_result, mat_sizes.at(0), mat_sizes.at(2));
             auto eq = is_equal(cpu_result, gpu_result);
             std::println("\nIs correct: {}", eq ? "true" : "false");
         }
