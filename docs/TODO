@@ -1,7 +1,7 @@
 Plan:
 - [x] PollEvents
 - [x] disable exceptions
-- [ ] Capy integration
+- [x] Capy integration
 - [ ] Single particle (CPU physics)
 - [ ] Collision system (CPU physics)
 - [ ] bonus: impossisble collision bug fix
