@@ -10,6 +10,6 @@ struct Config {
     Mode mode = Mode::GPU;
 };
 
-extern Config config;
+inline Config global_config{};
 
 } // namespace ph
