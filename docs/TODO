@@ -3,7 +3,7 @@ Plan:
 - [x] disable exceptions
 - [x] Capy integration
 - [ ] refactor to coroutines
-- [ ] Draw the particle
+- [ ] Draw the particle using the grid
 - [ ] Control the particle with keys
 - [ ] Single particle (CPU physics)
 - [ ] Collision system (CPU physics)
