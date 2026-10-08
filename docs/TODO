@@ -1,0 +1,8 @@
+Plan:
+- [x] PollEvents
+- [ ] disable exceptions
+- [ ] Capy integration
+- [ ] Single particle (CPU physics)
+- [ ] Collision system (CPU physics)
+- [ ] bonus: impossisble collision bug fix
+- [ ] GPU calculations for particles
