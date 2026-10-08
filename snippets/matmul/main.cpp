@@ -22,8 +22,40 @@ std::vector<float> control_calc(const std::vector<float> &mat1, const std::vecto
 std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<float> &mat2,
                             const std::vector<int> &mat_sizes) {
     cl::Context context;
-    auto dev = ph::get_deivce(context, mode);
-    auto program = ph::compile_kernel("matmul.cl", context, dev);
+    auto dev_result = ph::get_device(context);
+    if (!dev_result.has_value()) {
+        switch (dev_result.error()) {
+        case ph::DeviceError::ComputeDeviceIsNotAwailable:
+            std::println("Compute device is not awailable.");
+            break;
+        case ph::DeviceError::DeviceNameIsNotAwailable:
+            std::println("Device name is not awailable.");
+            break;
+        case ph::DeviceError::DeviceVendorIsNotAwailable:
+            std::println("Device vendor is not awailable.");
+            break;
+        default:
+            std::println("Unknown error on get_device()");
+            break;
+        }
+        std::terminate();
+    }
+    auto &dev = dev_result.value();
+
+    std::filesystem::path kernel_path("matmul.cl");
+    auto program_result = ph::compile_kernel(kernel_path, context, dev);
+    if (!program_result.has_value()) {
+        switch (program_result.error()) {
+        case ph::KernelError::FailedToOpenKernelCodeTextFile:
+            std::println("Failed to open kernel file '{}'.", kernel_path.string());
+            break;
+        default:
+            std::println("Unknown error on compile_kernel()");
+            break;
+        }
+        std::terminate();
+    }
+    auto &program = program_result.value();
     cl::Kernel kernel(program, "matmul");
     cl::CommandQueue cmd_queue(context, dev);
 

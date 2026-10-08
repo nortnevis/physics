@@ -52,7 +52,7 @@ int align(int x, int y) {
     return (x + y - 1) / y * y;
 }
 
-cl::Device get_deivce(cl::Context &context, Mode mode) {
+std::expected<cl::Device, DeviceError> get_device(cl::Context &context, Mode mode) {
     if (mode == Mode::GPU) {
         context = cl::Context(CL_DEVICE_TYPE_GPU);
     } else {
@@ -62,16 +62,16 @@ cl::Device get_deivce(cl::Context &context, Mode mode) {
     auto *err = new cl_int{0};
     auto dev_list = context.getInfo<CL_CONTEXT_DEVICES>(err);
     if (*err != CL_SUCCESS || dev_list.empty()) {
-        throw std::runtime_error("No awailable compute device");
+        return std::unexpected(DeviceError::ComputeDeviceIsNotAwailable);
     }
     auto dev = dev_list.front();
     auto dev_name = dev.getInfo<CL_DEVICE_NAME>(err);
     if (*err != CL_SUCCESS) {
-        throw std::runtime_error("Couldn't get device name");
+        return std::unexpected(DeviceError::DeviceNameIsNotAwailable);
     }
     auto dev_vendor = dev.getInfo<CL_DEVICE_VENDOR>(err);
     if (*err != CL_SUCCESS) {
-        throw std::runtime_error("Couldn't get device's vendor");
+        return std::unexpected(DeviceError::DeviceVendorIsNotAwailable);
     }
 
     std::println("Device name: {}", dev_name);
@@ -80,10 +80,11 @@ cl::Device get_deivce(cl::Context &context, Mode mode) {
     return dev;
 }
 
-cl::Program compile_kernel(const std::filesystem::path &path, cl::Context &context, cl::Device &dev) {
+std::expected<cl::Program, KernelError> compile_kernel(const std::filesystem::path &path, cl::Context &context,
+                                                       cl::Device &dev) {
     std::ifstream cl_file(path);
     if (!cl_file.is_open()) {
-        throw std::runtime_error(std::format("Failed to open specified OpenCL kernel file: {}", path.string()));
+        return std::unexpected(KernelError::FailedToOpenKernelCodeTextFile);
     }
     std::stringstream buffer;
     buffer << cl_file.rdbuf();

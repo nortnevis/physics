@@ -59,8 +59,21 @@ enum class Mode {
     _count,
 };
 
-cl::Device get_deivce(cl::Context &context, Mode mode = Mode::GPU);
+enum class DeviceError {
+    ComputeDeviceIsNotAwailable,
+    DeviceNameIsNotAwailable,
+    DeviceVendorIsNotAwailable,
+    _count,
+};
 
-cl::Program compile_kernel(const std::filesystem::path &path, cl::Context &context, cl::Device &dev);
+enum class KernelError {
+    FailedToOpenKernelCodeTextFile,
+    _count,
+};
+
+std::expected<cl::Device, DeviceError> get_device(cl::Context &context, Mode mode = Mode::GPU);
+
+std::expected<cl::Program, KernelError> compile_kernel(const std::filesystem::path &path, cl::Context &context,
+                                                       cl::Device &dev);
 
 } // namespace ph

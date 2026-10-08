@@ -1,7 +1,24 @@
 int main(int, char **) {
     cl::Context ctx;
-    auto dev = ph::get_deivce(ctx);
-
+    auto dev_result = ph::get_device(ctx);
+    if (!dev_result.has_value()) {
+        switch (dev_result.error()) {
+        case ph::DeviceError::ComputeDeviceIsNotAwailable:
+            std::println("Compute device is not awailable.");
+            break;
+        case ph::DeviceError::DeviceNameIsNotAwailable:
+            std::println("Device name is not awailable.");
+            break;
+        case ph::DeviceError::DeviceVendorIsNotAwailable:
+            std::println("Device vendor is not awailable.");
+            break;
+        default:
+            std::println("Unknown error on get_device");
+            break;
+        }
+        std::terminate();
+    }
+    auto &dev = *dev_result;
     auto wg_size = dev.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
     auto wi_count = dev.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
 

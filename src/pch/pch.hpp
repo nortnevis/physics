@@ -6,7 +6,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
-#include <exception>
+#include <expected>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -24,5 +24,7 @@
 
 #define CL_HPP_TARGET_OPENCL_VERSION 300 // Specifies target OpenCL version
 #include <CL/opencl.hpp>                 // Core OpenCL C header
+
+#pragma warning(disable : 4651)
 
 #include "utils.hpp"
