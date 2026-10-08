@@ -40,7 +40,7 @@ std::vector<int> parse_args(int argc, const char *argv[]) {
 
 void init(std::vector<float> &mat) {
     for (auto &el : mat) {
-        el = ph::rand_int(0, 10);
+        el = ph::rand_float(0, 10);
     }
 }
 
@@ -54,7 +54,7 @@ void print(const std::vector<float> &mat, int rows, int cols) {
 }
 
 void save2file(const std::vector<float> &mat, int rows, int cols, std::filesystem::path path) {
-    assert(rows * cols == mat.size() && "rows*cols != mat.size()");
+    assert(rows * cols == (int)mat.size() && "rows*cols != mat.size()");
     static_assert(sizeof(float) == 4 && "sizeof(float) != 4");
     if (path.empty()) {
         auto time_stamp = std::chrono::time_point_cast<std::chrono::seconds>(std::chrono::system_clock::now());

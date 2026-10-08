@@ -24,6 +24,12 @@ find_package(glfw3 CONFIG REQUIRED)
 
 file(GLOB pch_files CONFIGURE_DEPENDS src/pch/*.[hc]pp)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  add_compile_options(/W4 /WX)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  add_compile_options(-Wall -Wextra -Werror)
+endif()
+
 add_library(pch STATIC ${pch_files})
 target_precompile_headers(pch PUBLIC src/pch/pch.hpp)
 target_link_libraries(pch PUBLIC raylib glfw OpenCL::OpenCL)

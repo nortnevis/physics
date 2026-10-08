@@ -1,8 +1,20 @@
 #include "render.hpp"
 
+#if defined(_MSC_VER)
+#define DISABLE_DEPRECATION_WARNINGS __pragma(warning(push)) __pragma(warning(disable : 4996))
+#define RESTORE_DEPRECATION_WARNINGS __pragma(warning(pop))
+#elif defined(__GNUC__) || defined(__clang__)
+#define DISABLE_DEPRECATION_WARNINGS                                                                                   \
+    _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#define RESTORE_DEPRECATION_WARNINGS _Pragma("GCC diagnostic pop")
+#else
+#define DISABLE_DEPRECATION_WARNINGS
+#define RESTORE_DEPRECATION_WARNINGS
+#endif
+
 cl_device_id create_device();
 
-cl_program build_kernel_code(cl_context ctx, cl_device_id dev);
+cl_program build_kernel_code(cl_context ctx);
 
 int align(int x, int y);
 
@@ -33,11 +45,13 @@ void gpu_calculus(std::stop_token stop, std::vector<cl_uint> &pixels, int res_w,
     auto context = clCreateContext(nullptr, 1, &device, nullptr, nullptr, &err);
     if (err)
         throw;
-    auto program = build_kernel_code(context, device);
+    auto program = build_kernel_code(context);
     auto kernel = clCreateKernel(program, "draw_mandelbrot", &err);
     if (err)
         throw;
+    DISABLE_DEPRECATION_WARNINGS
     auto command_queue = clCreateCommandQueue(context, device, 0, &err);
+    RESTORE_DEPRECATION_WARNINGS
     if (err)
         throw;
     auto cl_mem_buff = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint) * res_w * res_h, nullptr, &err);
@@ -63,10 +77,10 @@ void gpu_calculus(std::stop_token stop, std::vector<cl_uint> &pixels, int res_w,
 
     float xcenter = 0.f;
     float ycenter = 0.f;
-    constexpr float center_step = 0.0005;
+    constexpr float center_step = 0.0005f;
 
     float scale = 1.0f;
-    constexpr float scale_step = 0.01;
+    constexpr float scale_step = 0.01f;
 
     while (!stop.stop_requested()) {
         if (IsKeyDown(KEY_E)) {
@@ -111,7 +125,7 @@ cl_device_id create_device() {
     return dev;
 }
 
-cl_program build_kernel_code(cl_context ctx, cl_device_id dev) {
+cl_program build_kernel_code(cl_context ctx) {
     cl_int err = 0;
 
     std::ifstream cl_file("mandelbrot_set.cl");

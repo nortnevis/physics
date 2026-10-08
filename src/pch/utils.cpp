@@ -24,8 +24,8 @@ int rand_int(int a, int b) {
 }
 
 float rand_float(float a, float b) {
-    static int _a = real_dist.param().a();
-    static int _b = real_dist.param().b();
+    static float _a = real_dist.param().a();
+    static float _b = real_dist.param().b();
     if (a != _a || b != _b) {
         using param_t = decltype(real_dist)::param_type;
         real_dist.param(param_t{a, b});
