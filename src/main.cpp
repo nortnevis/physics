@@ -1,4 +1,5 @@
 #include "config.hpp"
+#include "event_handler.hpp"
 #include "render.hpp"
 
 using namespace ph;
@@ -10,6 +11,7 @@ int main(int, char **) {
     InitWindow(global_config.screen_width, global_config.screen_height, global_config.title.c_str());
     SetTargetFPS(global_config.fps);
 
+    auto event_loop = std::jthread(event_handling_loop);
     render_loop();
     CloseWindow();
     return 0;
