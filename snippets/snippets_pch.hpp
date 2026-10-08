@@ -20,14 +20,10 @@
 #include <thread>
 #include <vector>
 
-#pragma warning(push)    // save warning flags state
-#pragma warning(push, 0) // suppress all warnings
 #include <boost/capy.hpp>
-#pragma warning(pop) // remove suppressions
-#pragma warning(pop) // restore original warning flags and clear pragma stack
 #include <raylib.h>
 
 #define CL_HPP_TARGET_OPENCL_VERSION 300 // Specifies target OpenCL version
 #include <CL/opencl.hpp>                 // Core OpenCL C header
 
-#include "utils.hpp"
+#include "../src/pch/utils.hpp"
