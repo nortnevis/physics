@@ -2,6 +2,9 @@ Plan:
 - [x] PollEvents
 - [x] disable exceptions
 - [x] Capy integration
+- [ ] refactor to coroutines
+- [ ] Draw the particle
+- [ ] Control the particle with keys
 - [ ] Single particle (CPU physics)
 - [ ] Collision system (CPU physics)
 - [ ] bonus: impossisble collision bug fix
