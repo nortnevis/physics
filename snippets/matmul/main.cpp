@@ -44,7 +44,7 @@ std::vector<float> gpu_calc(const std::vector<float> &mat1, const std::vector<fl
     kernel.setArg(2, sizes_buff);
     kernel.setArg(3, result_buff);
 
-    auto [local_range, global_range] = ph::get_task_ndranges(dev, std::vector(mat_sizes.at(0), mat_sizes.at(2)));
+    auto [local_range, global_range] = ph::get_task_ndranges(dev, std::vector{mat_sizes.at(0), mat_sizes.at(2)});
 
     std::println("Task ndragnes:");
     std::println("local dims: {}; Sizes: ", local_range.dimensions());
