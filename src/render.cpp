@@ -7,7 +7,6 @@ namespace ph {
 static int64_t current_fps = 0;
 
 void ManualEndDrawing() {
-    static int64_t frame_count = 0;
     static double previous_time = GetTime();
     double target_time = 1.0 / global_config.fps;
 
