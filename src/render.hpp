@@ -2,10 +2,10 @@
 
 namespace ph {
 
-void ManualEndDrawing();
+void ManualEndDrawing() noexcept;
 
-void ManualDrawFPS();
+void ManualDrawFPS() noexcept;
 
-void render_loop();
+void render_loop() noexcept;
 
 } // namespace ph

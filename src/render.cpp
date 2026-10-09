@@ -6,7 +6,7 @@ namespace ph {
 
 static int64_t current_fps = 0;
 
-void ManualEndDrawing() {
+void ManualEndDrawing() noexcept {
     static double previous_time = GetTime();
     double target_time = 1.0 / global_config.fps;
 
@@ -27,12 +27,12 @@ void ManualEndDrawing() {
     PollInputEvents();
 }
 
-void ManualDrawFPS() {
+void ManualDrawFPS() noexcept {
     DrawText(TextFormat("%i FPS", current_fps), 10, 10, 20, LIME);
     DrawText("vcpkg 6.0 EndDrawing patch active", 10, 40, 20, DARKBLUE);
 }
 
-void render_loop() {
+void render_loop() noexcept {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BLACK);
