@@ -21,3 +21,5 @@ If:
   PathMatch: (src/pch/pch|snippets/snippets_pch)\.hpp
 Diagnostics:
   UnusedIncludes: None
+  ClangTidy:
+    Remove: [misc-unused-alias-decls, misc-unused-using-decls]

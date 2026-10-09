@@ -49,3 +49,9 @@
 #endif
 
 #include "utils.hpp"
+
+namespace ph {
+
+namespace capy = boost::capy;
+
+} // namespace ph
