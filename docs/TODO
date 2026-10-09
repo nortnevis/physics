@@ -3,8 +3,8 @@ Plan:
 - [x] disable exceptions
 - [x] Capy integration
 - [x] refactor to coroutines
-- [ ] Draw the particle using the grid
-- [ ] Control the particle with keys
+- [x] Draw the particle using the grid
+- [x] Control the particle with keys (spawning)
 - [ ] Single particle (CPU physics)
 - [ ] Collision system (CPU physics)
 - [ ] bonus: impossisble collision bug fix
