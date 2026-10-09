@@ -5,6 +5,9 @@ namespace ph {
 
 void event_handling_loop(std::stop_token token) noexcept {
     auto &grid_param = global::config.grid_params;
+    auto &grid = global::particles_grid;
+    auto &templates = global::particles_templates;
+    auto &data = global::particles_data;
     while (!token.stop_requested()) {
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             auto pos = GetMousePosition();
@@ -12,7 +15,10 @@ void event_handling_loop(std::stop_token token) noexcept {
                 continue;
             }
             if (pos.x < grid_param.width && pos.y < grid_param.height) {
-                global::particles_grid[Position::as_offset((int)pos.x, (int)pos.y)] = ParticleType::DUST;
+                constexpr auto dust = ParticleType::DUST;
+                auto offset = Position::as_offset((int)pos.x, (int)pos.y);
+                grid[offset] = dust;
+                data[offset] = templates[(int)dust];
             }
         }
     }

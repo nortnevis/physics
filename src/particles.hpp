@@ -24,19 +24,13 @@ struct Particle {
     Color color = BLACK;
     float density = 0;
     float mass = 0;
+    Vector2 velocity = {0.f, 0.f};
 };
 
 namespace global {
 
-inline std::vector<Particle> particles_list{
-    {}, // Default VOID
-    {
-        .type = ParticleType::DUST,
-        .color = YELLOW,
-        .density = 1500.f,
-        .mass = 0.001f,
-    },
-};
+inline std::vector<Particle> particles_templates{};
+inline std::vector<Particle> particles_data{};
 
 inline std::vector<ParticleType> particles_grid{};
 
@@ -45,6 +39,18 @@ inline std::vector<ParticleType> particles_grid{};
 inline void init_particles() {
     test_assertions();
     global::particles_grid = std::vector<ParticleType>(global::config.grid_params.total);
+    global::particles_data = std::vector<Particle>(global::config.grid_params.total);
+
+    global::particles_templates = std::vector<Particle>((int)ParticleType::_count);
+    auto &templates = global::particles_templates;
+    templates[(int)ParticleType::VOID] = {};
+    templates[(int)ParticleType::DUST] = {
+        .type = ParticleType::DUST,
+        .color = YELLOW,
+        .density = 1500.f,
+        .mass = 0.001f,
+        .velocity = {0.f, 0.f},
+    };
 }
 
 } // namespace ph

@@ -8,16 +8,16 @@ namespace cpu {
 
 void draw_particles() noexcept {
     auto &grid_params = global::config.grid_params;
-    DrawRectangle(0, 0, grid_params.width, grid_params.height, global::particles_list[(int)ParticleType::VOID].color);
+    auto &templates = global::particles_templates;
+    auto &data = global::particles_data;
+
+    static const auto void_color = templates[(int)ParticleType::VOID].color;
+    DrawRectangle(0, 0, grid_params.width, grid_params.height, void_color);
+
     for (int y = 0; y < grid_params.height; ++y) {
         for (int x = 0; x < grid_params.width; ++x) {
-            auto type = global::particles_grid[Position::as_offset(x, y)];
-            const auto &properties = global::particles_list[(int)type];
-            if (type == ParticleType::VOID) {
-                continue;
-            } else if (type == ParticleType::DUST) {
-                DrawRectangle(x, y, grid_params.particle_width, grid_params.particle_height, properties.color);
-            }
+            auto particle = data[Position::as_offset(x, y)];
+            DrawRectangle(x, y, grid_params.particle_width, grid_params.particle_height, particle.color);
         }
     }
 }
