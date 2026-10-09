@@ -7,13 +7,14 @@ namespace ph {
 namespace cpu {
 
 void draw_particles() noexcept {
-    auto &grid_params = global::config.grid_params;
-    auto &templates = global::particles_templates;
-    auto &data = global::particles_data;
+    static auto &grid_params = global::config.grid_params;
+    static auto &templates = global::particles_templates;
+    static auto &data = global::particles_data;
 
     static const auto void_color = templates[(int)ParticleType::VOID].color;
     DrawRectangle(0, 0, grid_params.width, grid_params.height, void_color);
 
+    // TODO: measure performance and optimize
     for (int y = 0; y < grid_params.height; ++y) {
         for (int x = 0; x < grid_params.width; ++x) {
             auto particle = data[Position::as_offset(x, y)];
