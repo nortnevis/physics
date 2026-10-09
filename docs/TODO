@@ -2,7 +2,7 @@ Plan:
 - [x] PollEvents
 - [x] disable exceptions
 - [x] Capy integration
-- [ ] refactor to coroutines
+- [x] refactor to coroutines
 - [ ] Draw the particle using the grid
 - [ ] Control the particle with keys
 - [ ] Single particle (CPU physics)
