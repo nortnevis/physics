@@ -48,6 +48,7 @@
 #pragma clang diagnostic pop
 #endif
 
+#include "config.hpp"
 #include "utils.hpp"
 
 namespace ph {

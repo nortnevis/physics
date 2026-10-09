@@ -1,17 +1,18 @@
-#include "config.hpp"
 #include "event_handler.hpp"
+#include "particles.hpp"
 #include "render.hpp"
 
 using namespace ph;
 
 int main(int, char **) {
     try {
-        std::println("Config:\n\twidth: {}\n\theight: {}\n\tfps: {}\n\ttitle: {}", global_config.screen_width,
-                     global_config.screen_height, global_config.fps, global_config.title);
-        std::println("\taddr: {}", (void *)&global_config);
-        InitWindow(global_config.screen_width, global_config.screen_height, global_config.title.c_str());
-        SetTargetFPS(global_config.fps);
+        std::println("Config:\n\twidth: {}\n\theight: {}\n\tfps: {}\n\ttitle: {}", global::config.screen_width,
+                     global::config.screen_height, global::config.fps, global::config.title);
+        std::println("\taddr: {}", (void *)&global::config);
+        InitWindow(global::config.screen_width, global::config.screen_height, global::config.title.c_str());
+        SetTargetFPS(global::config.fps);
 
+        init_particles();
         auto event_loop = std::jthread(event_handling_loop);
         render_loop();
         CloseWindow();

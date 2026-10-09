@@ -1,14 +1,57 @@
-#include "config.hpp"
+#include "particles.hpp"
 #include "render.hpp"
 #include <rlgl.h>
 
 namespace ph {
 
+namespace cpu {
+
+void draw_particles() noexcept {
+    auto &grid_params = global::config.grid_params;
+    DrawRectangle(0, 0, grid_params.width, grid_params.height, global::particles_list[(int)ParticleType::VOID].color);
+    for (int y = 0; y < grid_params.height; ++y) {
+        for (int x = 0; x < grid_params.width; ++x) {
+            auto type = global::particles_grid[Position::as_offset(x, y)];
+            const auto &properties = global::particles_list[(int)type];
+            if (type == ParticleType::VOID) {
+                continue;
+            } else if (type == ParticleType::DUST) {
+                DrawRectangle(x, y, grid_params.particle_width, grid_params.particle_height, properties.color);
+            }
+        }
+    }
+}
+
+} // namespace cpu
+
+namespace gpu {
+
+void draw_particles() noexcept { assert(false && "Not implemented yet!"); }
+
+} // namespace gpu
+
+void render_loop() noexcept {
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(WHITE);
+
+        DrawText("Hello, World!", 190, 200, 20, LIGHTGRAY);
+        if (global::config.mode == Mode::GPU) {
+            gpu::draw_particles();
+        } else {
+            cpu::draw_particles();
+        }
+
+        ManualDrawFPS();
+        ManualEndDrawing(); // apply fix for EndDrawing issue for vcpkg 6.0 version
+    }
+}
+
 static int64_t current_fps = 0;
 
 void ManualEndDrawing() noexcept {
     static double previous_time = GetTime();
-    double target_time = 1.0 / global_config.fps;
+    double target_time = 1.0 / global::config.fps;
 
     // flush the render batch data manually
     rlDrawRenderBatchActive();
@@ -30,18 +73,6 @@ void ManualEndDrawing() noexcept {
 void ManualDrawFPS() noexcept {
     DrawText(TextFormat("%i FPS", current_fps), 10, 10, 20, LIME);
     DrawText("vcpkg 6.0 EndDrawing patch active", 10, 40, 20, DARKBLUE);
-}
-
-void render_loop() noexcept {
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        DrawText("Hello, World!", 190, 200, 20, LIGHTGRAY);
-
-        ManualDrawFPS();
-        ManualEndDrawing(); // apply fix for EndDrawing issue for vcpkg 6.0 version
-    }
 }
 
 } // namespace ph
