@@ -37,12 +37,9 @@ target_precompile_headers(pch PUBLIC src/pch/pch.hpp)
 target_link_libraries(pch PUBLIC raylib glfw OpenCL::OpenCL Boost::capy)
 cmake_print_variables(CMAKE_CXX_COMPILER_ID)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  target_compile_options(pch PUBLIC /W4 /WX /EHs-c-)
-  target_compile_definitions(pch PUBLIC _HAS_EXCEPTIONS=0)
+  target_compile_options(pch PUBLIC /W4 /WX)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  target_compile_options(
-    pch PUBLIC -Wall -Wextra -Werror -fno-exceptions -fno-unwind-tables
-               -fno-asynchronous-unwind-tables)
+  target_compile_options(pch PUBLIC -Wall -Wextra -Werror)
 endif()
 
 file(GLOB hpp_files CONFIGURE_DEPENDS src/*.hpp)
