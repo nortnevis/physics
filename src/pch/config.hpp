@@ -27,9 +27,9 @@ namespace global {
 
 inline Config config{};
 
-}
+} // namespace global
 
-inline void test_assertions() {
+inline void test_assertions() noexcept {
     auto &grid = global::config.grid_params;
     assert(grid.width * grid.height == grid.total);
     assert(grid.width <= global::config.screen_width);

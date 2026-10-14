@@ -12,11 +12,11 @@ struct Position {
     int x = 0;
     int y = 0;
 
-    size_t as_offset() { return y * global::config.grid_params.width + x; }
-    static size_t as_offset(int x, int y) { return y * global::config.grid_params.width + x; }
-    static size_t as_offset(const Position &pos) { return pos.y * global::config.grid_params.width + pos.x; }
-    static Position from_vector2(const Vector2 pos) { return {.x = (int)pos.x, .y = (int)pos.y}; }
-    static Vector2 to_vector2(const Position &pos) { return {.x = (float)pos.x, .y = (float)pos.y}; }
+    size_t as_offset() noexcept;
+    static size_t as_offset(int x, int y) noexcept;
+    static size_t as_offset(const Position &pos) noexcept;
+    static Position from_vector2(const Vector2 pos) noexcept;
+    static Vector2 to_vector2(const Position &pos) noexcept;
 };
 
 struct Particle {
@@ -36,25 +36,10 @@ inline std::vector<ParticleType> particles_grid{};
 
 } // namespace global
 
-inline Color get_particle_default_color(ParticleType type) { return global::particles_templates[(int)type].color; }
+Color get_particle_default_color(ParticleType type) noexcept;
 
-inline void init_particles() {
-    test_assertions();
-    global::particles_grid = std::vector<ParticleType>(global::config.grid_params.total);
-    global::particles_data = std::vector<Particle>(global::config.grid_params.total);
+void init_particles();
 
-    global::particles_templates = std::vector<Particle>((int)ParticleType::_count);
-    auto &templates = global::particles_templates;
-    templates[(int)ParticleType::VOID] = {};
-    templates[(int)ParticleType::DUST] = {
-        .type = ParticleType::DUST,
-        .color = YELLOW,
-        .density = 1500.f,
-        .mass = 0.001f,
-        .velocity = {0.f, 0.f},
-    };
-}
-
-}
+void physics_loop() noexcept;
 
 } // namespace ph
