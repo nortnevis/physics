@@ -4,6 +4,9 @@
 
 namespace ph {
 
+static Image canvas_image{};
+static Texture2D canvas_texture{};
+
 namespace cpu {
 
 void draw_particles() noexcept {
@@ -11,7 +14,7 @@ void draw_particles() noexcept {
     static auto &data = global::particles_data;
 
     // TODO: maybe make a shader?
-    auto *pixels = (unsigned char *)global::canvas_image.data;
+    auto *pixels = (unsigned char *)canvas_image.data;
     for (int y = 0; y < grid_params.height; ++y) {
         for (int x = 0; x < grid_params.width; ++x) {
             size_t offset = Position::as_offset(x, y);
@@ -26,8 +29,8 @@ void draw_particles() noexcept {
             pixels[pixels_offset + 3] = color.a;
         }
     }
-    UpdateTexture(global::canvas_texture, pixels);
-    DrawTexture(global::canvas_texture, 0, 0, WHITE);
+    UpdateTexture(canvas_texture, pixels);
+    DrawTexture(canvas_texture, 0, 0, WHITE);
 }
 
 } // namespace cpu
@@ -39,6 +42,18 @@ void draw_particles() noexcept { assert(false && "Not implemented yet!"); }
 } // namespace gpu
 
 void render_loop() noexcept {
+    Color fill_color = get_particle_default_color(ParticleType::VOID);
+
+    canvas_image = {
+        .data = new Color[global::config.grid_params.total]{fill_color},
+        .width = global::config.grid_params.width,
+        .height = global::config.grid_params.height,
+        .mipmaps = 1,
+        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
+    };
+
+    canvas_texture = LoadTextureFromImage(canvas_image);
+
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(WHITE);
