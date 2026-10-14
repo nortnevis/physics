@@ -10,20 +10,7 @@ void draw_particles() noexcept {
     static auto &grid_params = global::config.grid_params;
     static auto &data = global::particles_data;
 
-    static auto begin = std::chrono::steady_clock::now();
-    static double mean_time = 0;
-    static int samples = -1;
-    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - begin);
-    mean_time += diff.count();
-    samples++;
-    if (samples % 10 == 0) {
-        mean_time /= samples;
-        std::println("mean_time: {}ms", mean_time);
-        mean_time = 0;
-        samples = 0;
-    }
-    begin = std::chrono::steady_clock::now();
-    // TODO: make a shader
+    // TODO: maybe make a shader?
     auto *pixels = (unsigned char *)global::canvas_image.data;
     for (int y = 0; y < grid_params.height; ++y) {
         for (int x = 0; x < grid_params.width; ++x) {
