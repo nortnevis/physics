@@ -34,7 +34,12 @@ inline std::vector<Particle> particles_data{};
 
 inline std::vector<ParticleType> particles_grid{};
 
+inline Image canvas_image{};
+inline Texture2D canvas_texture{};
+
 } // namespace global
+
+inline Color get_particle_default_color(ParticleType type) { return global::particles_templates[(int)type].color; }
 
 inline void init_particles() {
     test_assertions();
@@ -51,6 +56,17 @@ inline void init_particles() {
         .mass = 0.001f,
         .velocity = {0.f, 0.f},
     };
+    Color fill_color = get_particle_default_color(ParticleType::VOID);
+
+    global::canvas_image = {
+        .data = new Color[global::config.grid_params.total]{fill_color},
+        .width = global::config.grid_params.width,
+        .height = global::config.grid_params.height,
+        .mipmaps = 1,
+        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
+    };
+
+    global::canvas_texture = LoadTextureFromImage(global::canvas_image);
 }
 
 } // namespace ph

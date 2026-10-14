@@ -8,19 +8,39 @@ namespace cpu {
 
 void draw_particles() noexcept {
     static auto &grid_params = global::config.grid_params;
-    static auto &templates = global::particles_templates;
     static auto &data = global::particles_data;
 
-    static const auto void_color = templates[(int)ParticleType::VOID].color;
-    DrawRectangle(0, 0, grid_params.width, grid_params.height, void_color);
-
-    // TODO: measure performance and optimize
+    static auto begin = std::chrono::steady_clock::now();
+    static double mean_time = 0;
+    static int samples = -1;
+    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - begin);
+    mean_time += diff.count();
+    samples++;
+    if (samples % 10 == 0) {
+        mean_time /= samples;
+        std::println("mean_time: {}ms", mean_time);
+        mean_time = 0;
+        samples = 0;
+    }
+    begin = std::chrono::steady_clock::now();
+    // TODO: make a shader
+    auto *pixels = (unsigned char *)global::canvas_image.data;
     for (int y = 0; y < grid_params.height; ++y) {
         for (int x = 0; x < grid_params.width; ++x) {
-            auto particle = data[Position::as_offset(x, y)];
-            DrawRectangle(x, y, grid_params.particle_width, grid_params.particle_height, particle.color);
+            size_t offset = Position::as_offset(x, y);
+            size_t pixels_offset = offset * sizeof(Color);
+            if (pixels_offset > global::particles_data.size() * sizeof(decltype(global::particles_data)::value_type)) {
+                std::println("BAD! {} <- {}", pixels_offset, offset);
+            }
+            auto color = data[offset].color;
+            pixels[pixels_offset + 0] = color.r;
+            pixels[pixels_offset + 1] = color.g;
+            pixels[pixels_offset + 2] = color.b;
+            pixels[pixels_offset + 3] = color.a;
         }
     }
+    UpdateTexture(global::canvas_texture, pixels);
+    DrawTexture(global::canvas_texture, 0, 0, WHITE);
 }
 
 } // namespace cpu

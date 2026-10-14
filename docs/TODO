@@ -5,6 +5,8 @@ Plan:
 - [x] refactor to coroutines
 - [x] Draw the particle using the grid
 - [x] Control the particle with keys (spawning)
+- [x] Optimize CPU drawing using buffer
+- [ ] Shaders for particle drawing
 - [ ] Single particle (CPU physics)
 - [ ] Collision system (CPU physics)
 - [ ] bonus: impossisble collision bug fix
