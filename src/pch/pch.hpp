@@ -33,7 +33,6 @@
 #pragma clang diagnostic ignored "-Weverything"
 #endif
 
-#include <boost/capy.hpp>
 #include <raylib.h>
 
 #define CL_HPP_TARGET_OPENCL_VERSION 300 // Specifies target OpenCL version
@@ -50,9 +49,3 @@
 
 #include "config.hpp"
 #include "utils.hpp"
-
-namespace ph {
-
-namespace capy = boost::capy;
-
-} // namespace ph

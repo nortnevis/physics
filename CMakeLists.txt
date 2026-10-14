@@ -23,18 +23,11 @@ find_package(raylib CONFIG REQUIRED)
 find_package(OpenCL CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 
-FetchContent_Declare(
-  capy
-  GIT_REPOSITORY https://github.com/cppalliance/capy.git
-  GIT_TAG f764adc5b3e211558a88311feae79313e3d6f17c
-  GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(capy)
-
 file(GLOB pch_files CONFIGURE_DEPENDS src/pch/*.[hc]pp)
 
 add_library(pch STATIC ${pch_files})
 target_precompile_headers(pch PUBLIC src/pch/pch.hpp)
-target_link_libraries(pch PUBLIC raylib glfw OpenCL::OpenCL Boost::capy)
+target_link_libraries(pch PUBLIC raylib glfw OpenCL::OpenCL)
 cmake_print_variables(CMAKE_CXX_COMPILER_ID)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options(pch PUBLIC /W4 /WX)

@@ -19,8 +19,7 @@ add_library(
   snippets_pch STATIC snippets_pch.hpp ${CMAKE_SOURCE_DIR}/src/pch/utils.hpp
                       ${CMAKE_SOURCE_DIR}/src/pch/utils.cpp)
 target_precompile_headers(snippets_pch PUBLIC snippets_pch.hpp)
-target_link_libraries(snippets_pch PUBLIC raylib glfw OpenCL::OpenCL
-                                          Boost::capy)
+target_link_libraries(snippets_pch PUBLIC raylib glfw OpenCL::OpenCL)
 
 # Hello World printing
 add_executable(opencl_hello_world hello_world/main.cpp)

@@ -20,7 +20,6 @@
 #include <thread>
 #include <vector>
 
-#include <boost/capy.hpp>
 #include <raylib.h>
 
 #define CL_HPP_TARGET_OPENCL_VERSION 300 // Specifies target OpenCL version
