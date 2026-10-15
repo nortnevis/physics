@@ -17,7 +17,7 @@ void draw_particles() noexcept {
     auto *pixels = (unsigned char *)canvas_image.data;
     for (int y = 0; y < grid_params.height; ++y) {
         for (int x = 0; x < grid_params.width; ++x) {
-            size_t offset = Position::as_offset(x, y);
+            size_t offset = as_offset(x, y);
             size_t pixels_offset = offset * sizeof(Color);
             if (pixels_offset > global::particles_data.size() * sizeof(decltype(global::particles_data)::value_type)) {
                 std::println("BAD! {} <- {}", pixels_offset, offset);

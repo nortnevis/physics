@@ -13,11 +13,12 @@ struct Position {
     int y = 0;
 
     size_t as_offset() noexcept;
-    static size_t as_offset(int x, int y) noexcept;
-    static size_t as_offset(const Position &pos) noexcept;
-    static Position from_vector2(const Vector2 pos) noexcept;
-    static Vector2 to_vector2(const Position &pos) noexcept;
 };
+
+size_t as_offset(int x, int y) noexcept;
+size_t as_offset(const Position &pos) noexcept;
+Position from_vector2(const Vector2 pos) noexcept;
+Vector2 to_vector2(const Position &pos) noexcept;
 
 struct Particle {
     ParticleType type = ParticleType::VOID;
@@ -39,7 +40,5 @@ inline std::vector<ParticleType> particles_grid{};
 Color get_particle_default_color(ParticleType type) noexcept;
 
 void init_particles();
-
-void physics_loop() noexcept;
 
 } // namespace ph

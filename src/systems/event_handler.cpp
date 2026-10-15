@@ -16,7 +16,7 @@ void event_handling_loop(std::stop_token token) noexcept {
             }
             if (pos.x < grid_param.width && pos.y < grid_param.height) {
                 constexpr auto dust = ParticleType::DUST;
-                auto offset = Position::as_offset((int)pos.x, (int)pos.y);
+                auto offset = as_offset((int)pos.x, (int)pos.y);
                 grid[offset] = dust;
                 data[offset] = templates[(int)dust];
             }
