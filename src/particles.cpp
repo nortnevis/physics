@@ -2,22 +2,19 @@
 
 namespace ph {
 
-size_t Position::as_offset() noexcept { return y * global::config.grid_params.width + x; }
+size_t as_offset(float x, float y) noexcept {
+    int mul = (int)x * (int)y;
+    assert(mul < global::config.grid_params.total && mul > 0);
+    return (int)y * global::config.grid_params.width + (int)x;
+}
 
-size_t as_offset(int x, int y) noexcept { return y * global::config.grid_params.width + x; }
-
-size_t as_offset(const Position &pos) noexcept { return pos.y * global::config.grid_params.width + pos.x; }
-
-Position from_vector2(const Vector2 pos) noexcept { return {.x = (int)pos.x, .y = (int)pos.y}; }
-
-Vector2 to_vector2(const Position &pos) noexcept { return {.x = (float)pos.x, .y = (float)pos.y}; }
+size_t as_offset(const Vector2 &pos) noexcept { return as_offset(pos.x, pos.y); }
 
 Color get_particle_default_color(ParticleType type) noexcept { return global::particles_templates[(int)type].color; }
 
 void init_particles() {
     test_assertions();
-    global::particles_grid = std::vector<ParticleType>(global::config.grid_params.total);
-    global::particles_data = std::vector<Particle>(global::config.grid_params.total);
+    global::particles_data.reserve(global::config.grid_params.total);
 
     global::particles_templates = std::vector<Particle>((int)ParticleType::_count);
     auto &templates = global::particles_templates;

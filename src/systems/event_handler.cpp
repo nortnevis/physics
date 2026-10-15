@@ -5,22 +5,33 @@ namespace ph {
 
 void event_handling_loop(std::stop_token token) noexcept {
     auto &grid_param = global::config.grid_params;
-    auto &grid = global::particles_grid;
     auto &templates = global::particles_templates;
     auto &data = global::particles_data;
+
+    static double previous_time = GetTime();
+    double target_time = 1.0 / global::config.fps;
+
     while (!token.stop_requested()) {
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        PollInputEvents();
+
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
             auto pos = GetMousePosition();
             if (pos.x < 0 || pos.y < 0) {
                 continue;
             }
             if (pos.x < grid_param.width && pos.y < grid_param.height) {
-                constexpr auto dust = ParticleType::DUST;
-                auto offset = as_offset((int)pos.x, (int)pos.y);
-                grid[offset] = dust;
-                data[offset] = templates[(int)dust];
+                auto dust = templates[(int)ParticleType::DUST];
+                dust.id = data.size();
+                dust.pos = pos;
+                data.push_back(std::move(dust));
             }
         }
+
+        auto delta = GetTime() - previous_time;
+        if (delta < target_time) {
+            WaitTime(target_time - delta);
+        }
+        previous_time = GetTime();
     }
     std::println("Stop event handling.");
 }

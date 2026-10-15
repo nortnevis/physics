@@ -15,20 +15,15 @@ void draw_particles() noexcept {
 
     // TODO: maybe make a shader?
     auto *pixels = (unsigned char *)canvas_image.data;
-    for (int y = 0; y < grid_params.height; ++y) {
-        for (int x = 0; x < grid_params.width; ++x) {
-            size_t offset = as_offset(x, y);
-            size_t pixels_offset = offset * sizeof(Color);
-            if (pixels_offset > global::particles_data.size() * sizeof(decltype(global::particles_data)::value_type)) {
-                std::println("BAD! {} <- {}", pixels_offset, offset);
-            }
-            auto color = data[offset].color;
-            pixels[pixels_offset + 0] = color.r;
-            pixels[pixels_offset + 1] = color.g;
-            pixels[pixels_offset + 2] = color.b;
-            pixels[pixels_offset + 3] = color.a;
-        }
+    for (const auto &particle : data) {
+        size_t pixels_offset = as_offset(particle.pos) * sizeof(Color);
+        assert(pixels_offset < grid_params.total * sizeof(Color));
+        pixels[pixels_offset + 0] = particle.color.r;
+        pixels[pixels_offset + 1] = particle.color.g;
+        pixels[pixels_offset + 2] = particle.color.b;
+        pixels[pixels_offset + 3] = particle.color.a;
     }
+
     UpdateTexture(canvas_texture, pixels);
     DrawTexture(canvas_texture, 0, 0, WHITE);
 }
@@ -42,15 +37,20 @@ void draw_particles() noexcept { assert(false && "Not implemented yet!"); }
 } // namespace gpu
 
 void render_loop() noexcept {
-    Color fill_color = get_particle_default_color(ParticleType::VOID);
 
     canvas_image = {
-        .data = new Color[global::config.grid_params.total]{fill_color},
+        .data = new Color[global::config.grid_params.total],
         .width = global::config.grid_params.width,
         .height = global::config.grid_params.height,
         .mipmaps = 1,
         .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
     };
+
+    Color fill_color = get_particle_default_color(ParticleType::VOID);
+    auto *pixels = (Color *)canvas_image.data;
+    for (int i = 0; i < global::config.grid_params.total; ++i) {
+        pixels[i] = fill_color;
+    }
 
     canvas_texture = LoadTextureFromImage(canvas_image);
 
@@ -89,8 +89,6 @@ void ManualEndDrawing() noexcept {
     }
     current_fps = std::lround(1.0 / (GetTime() - previous_time));
     previous_time = GetTime();
-
-    PollInputEvents();
 }
 
 void ManualDrawFPS() noexcept {

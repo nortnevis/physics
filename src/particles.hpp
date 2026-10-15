@@ -8,20 +8,14 @@ enum class ParticleType : int {
     _count,
 };
 
-struct Position {
-    int x = 0;
-    int y = 0;
+size_t as_offset(float x, float y) noexcept;
+size_t as_offset(const Vector2 &pos) noexcept;
 
-    size_t as_offset() noexcept;
-};
-
-size_t as_offset(int x, int y) noexcept;
-size_t as_offset(const Position &pos) noexcept;
-Position from_vector2(const Vector2 pos) noexcept;
-Vector2 to_vector2(const Position &pos) noexcept;
-
+// Entity with components
 struct Particle {
+    int id = 0;
     ParticleType type = ParticleType::VOID;
+    Vector2 pos = {0, 0};
     Color color = BLACK;
     float density = 0;
     float mass = 0;
@@ -32,8 +26,6 @@ namespace global {
 
 inline std::vector<Particle> particles_templates{};
 inline std::vector<Particle> particles_data{};
-
-inline std::vector<ParticleType> particles_grid{};
 
 } // namespace global
 
