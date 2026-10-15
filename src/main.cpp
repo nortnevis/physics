@@ -6,11 +6,17 @@ using namespace ph;
 
 int main(int, char **) {
     try {
-        std::println("Config:\n\twidth: {}\n\theight: {}\n\tfps: {}\n\ttitle: {}", global::config.screen_width,
-                     global::config.screen_height, global::config.fps, global::config.title);
-        std::println("\taddr: {}", (void *)&global::config);
-        InitWindow(global::config.screen_width, global::config.screen_height, global::config.title.c_str());
-        SetTargetFPS(global::config.fps);
+        auto &conf = global::config;
+        conf.screen_width = 1920;
+        conf.screen_height = 1080;
+        conf.grid_params.width = conf.screen_width;
+        conf.grid_params.height = conf.screen_height;
+        conf.grid_params.total = conf.screen_width * conf.screen_height;
+        std::println("Config:\n\twidth: {}\n\theight: {}\n\tfps: {}\n\ttitle: {}", conf.screen_width,
+                     conf.screen_height, conf.fps, conf.title);
+        std::println("\taddr: {}", (void *)&conf);
+        InitWindow(conf.screen_width, conf.screen_height, conf.title.c_str());
+        SetTargetFPS(conf.fps);
 
         init_particles();
         auto event_loop = std::jthread(event_handling_loop);

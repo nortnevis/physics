@@ -7,8 +7,8 @@ namespace ph {
 struct Config {
   private:
     struct GridParams {
-        int width = 600;
-        int height = 450;
+        int width = 800;
+        int height = 600;
         int total = width * height;
         int particle_width = 1;
         int particle_height = 1;
