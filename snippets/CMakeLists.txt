@@ -15,10 +15,9 @@ endfunction()
 
 include_directories(./)
 
-add_library(
-  snippets_pch STATIC snippets_pch.hpp ${CMAKE_SOURCE_DIR}/src/pch/utils.hpp
-                      ${CMAKE_SOURCE_DIR}/src/pch/utils.cpp)
-target_precompile_headers(snippets_pch PUBLIC snippets_pch.hpp)
+file(GLOB_RECURSE pch_files CONFIGURE_DEPENDS snippets_pch/*.[hc]pp)
+add_library(snippets_pch STATIC ${pch_files})
+target_precompile_headers(snippets_pch PUBLIC snippets_pch/snippets_pch.hpp)
 target_link_libraries(snippets_pch PUBLIC raylib glfw OpenCL::OpenCL)
 
 # Hello World printing

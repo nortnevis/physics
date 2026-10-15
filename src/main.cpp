@@ -1,6 +1,6 @@
-#include "event_handler.hpp"
 #include "particles.hpp"
-#include "render.hpp"
+#include "systems/event_handler.hpp"
+#include "systems/render.hpp"
 
 using namespace ph;
 

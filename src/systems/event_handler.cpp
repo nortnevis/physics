@@ -1,5 +1,5 @@
+#include "../particles.hpp"
 #include "event_handler.hpp"
-#include "particles.hpp"
 
 namespace ph {
 

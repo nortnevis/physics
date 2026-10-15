@@ -23,10 +23,10 @@ find_package(raylib CONFIG REQUIRED)
 find_package(OpenCL CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 
-file(GLOB pch_files CONFIGURE_DEPENDS src/pch/*.[hc]pp)
+file(GLOB_RECURSE pch_files CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/pch/*.[hc]pp)
 
 add_library(pch STATIC ${pch_files})
-target_precompile_headers(pch PUBLIC src/pch/pch.hpp)
+target_precompile_headers(pch PUBLIC pch/pch.hpp)
 target_link_libraries(pch PUBLIC raylib glfw OpenCL::OpenCL)
 cmake_print_variables(CMAKE_CXX_COMPILER_ID)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -35,8 +35,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   target_compile_options(pch PUBLIC -Wall -Wextra -Werror)
 endif()
 
-file(GLOB hpp_files CONFIGURE_DEPENDS src/*.hpp)
-file(GLOB cpp_files CONFIGURE_DEPENDS src/*.cpp)
+file(GLOB_RECURSE hpp_files CONFIGURE_DEPENDS src/*.hpp)
+file(GLOB_RECURSE cpp_files CONFIGURE_DEPENDS src/*.cpp)
 
 add_executable(app ${hpp_files} ${cpp_files})
 target_precompile_headers(app REUSE_FROM pch)

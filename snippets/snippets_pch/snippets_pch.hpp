@@ -25,4 +25,4 @@
 #define CL_HPP_TARGET_OPENCL_VERSION 300 // Specifies target OpenCL version
 #include <CL/opencl.hpp>                 // Core OpenCL C header
 
-#include "../src/pch/utils.hpp"
+#include "snippets_utils.hpp"
