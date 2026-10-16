@@ -11,12 +11,13 @@ void event_handling_loop(std::stop_token token) noexcept {
     static double previous_time = GetTime();
     double target_time = 1.0 / global::config.fps;
 
+    Vector2 prev{0.f, 0.f};
     while (!token.stop_requested()) {
         PollInputEvents();
 
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             auto pos = GetMousePosition();
-            if (pos.x < 0 || pos.y < 0) {
+            if (pos.x < 0 || pos.y < 0 || (pos.x == prev.x && pos.y == prev.y)) {
                 continue;
             }
             if (pos.x < grid_param.width && pos.y < grid_param.height) {
@@ -25,6 +26,7 @@ void event_handling_loop(std::stop_token token) noexcept {
                 dust.pos = pos;
                 data.push_back(std::move(dust));
             }
+            prev = pos;
         }
 
         auto delta = GetTime() - previous_time;
