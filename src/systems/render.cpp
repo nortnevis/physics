@@ -58,13 +58,13 @@ void render_loop() noexcept {
         BeginDrawing();
         ClearBackground(WHITE);
 
-        DrawText("Hello, World!", 190, 200, 20, LIGHTGRAY);
         if (global::config.mode == Mode::GPU) {
             gpu::draw_particles();
         } else {
             cpu::draw_particles();
         }
 
+        DrawText(TextFormat("Particles: %i", global::particles_data.size()), 10, 40, 20, LIME);
         ManualDrawFPS();
         ManualEndDrawing(); // apply fix for EndDrawing issue for vcpkg 6.0 version
     }
@@ -93,7 +93,7 @@ void ManualEndDrawing() noexcept {
 
 void ManualDrawFPS() noexcept {
     DrawText(TextFormat("%i FPS", current_fps), 10, 10, 20, LIME);
-    DrawText("vcpkg 6.0 EndDrawing patch active", 10, 40, 20, DARKBLUE);
+    DrawText("vcpkg 6.0 EndDrawing patch active", 10, 70, 20, DARKBLUE);
 }
 
 } // namespace ph
