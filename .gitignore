@@ -20,6 +20,8 @@
 # Folders
 !/src
 !/src/**
+!/pch
+!/pch/**
 !/snippets
 !/snippets/**
 !/docs
