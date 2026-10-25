@@ -21,6 +21,7 @@ struct Config {
     int fps = 60;
     Mode mode = Mode::CPU;
     GridParams grid_params;
+    float pixel_scale_factor = 70.f;
 };
 
 namespace global {

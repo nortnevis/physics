@@ -1,20 +1,34 @@
+#include "../particles.hpp"
 #include "physics.hpp"
 
 namespace ph {
 
-void gravity_system(std::stop_token token) noexcept {
-    // auto &grid_param = global::config.grid_params;
-    // auto &grid = global::particles_grid;
-    // auto &templates = global::particles_templates;
-    // auto &data = global::particles_data;
+constexpr Vector2 _g = {0.f, 9.81f};
+// static auto &scale = global::config.pixel_scale_factor;
+// Vector2 _g_scaled = {_g.x * scale, _g.y * scale};
 
+void gravity_system(std::stop_token token) noexcept {
+    auto &data = global::particles_data;
+
+    static double prev_time = GetTime();
     while (!token.stop_requested()) {
-        // for (int y = 0; y < grid_params.height; ++y) {
-        //     for (int x = 0; x < grid_params.width; ++x) {
-        //         // auto particle = data[as_offset(x, y)];
-        //         // DrawRectangle(x, y, grid_params.particle_width, grid_params.particle_height, particle.color);
-        //     }
-        // }
+        // TODO: Make target time a global config
+        double target_time = 1.0 / global::config.fps;
+        auto delta = GetTime() - prev_time;
+        if (delta < target_time) {
+            WaitTime(target_time - delta);
+            delta = GetTime() - prev_time;
+        }
+        prev_time = GetTime();
+        float dt = (float)delta;
+        for (auto &p : data) {
+            auto &vx = p.velocity.x;
+            auto &vy = p.velocity.y;
+            vx += _g.x * dt;
+            vy += _g.y * dt;
+            p.pos.x += vx * dt;
+            p.pos.y += vy * dt;
+        }
     }
 }
 

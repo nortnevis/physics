@@ -74,6 +74,7 @@ static int64_t current_fps = 0;
 
 void ManualEndDrawing() noexcept {
     static double previous_time = GetTime();
+    // TODO: Make target time a global config
     double target_time = 1.0 / global::config.fps;
 
     // flush the render batch data manually

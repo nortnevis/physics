@@ -9,10 +9,11 @@ void event_handling_loop(std::stop_token token) noexcept {
     auto &data = global::particles_data;
 
     static double previous_time = GetTime();
-    double target_time = 1.0 / global::config.fps;
+    // TODO: Make target time a global config
 
     Vector2 prev{0.f, 0.f};
     while (!token.stop_requested()) {
+        double target_time = 1.0 / global::config.fps;
         PollInputEvents();
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {

@@ -1,5 +1,6 @@
 #include "particles.hpp"
 #include "systems/event_handler.hpp"
+#include "systems/physics.hpp"
 #include "systems/render.hpp"
 
 using namespace ph;
@@ -21,6 +22,7 @@ int main(int, char **) {
         init_particles();
         {
             auto event_loop = std::jthread(event_handling_loop);
+            auto physics_loop = std::jthread(gravity_system);
             render_loop();
         } // all jtrhead will join threre
         CloseWindow();
