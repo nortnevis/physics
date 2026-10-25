@@ -15,6 +15,7 @@ void draw_particles() noexcept {
 
     // TODO: maybe make a shader?
     auto *pixels = (unsigned char *)canvas_image.data;
+    // TODO: clear canvas
     for (const auto &particle : data) {
         size_t pixels_offset = as_offset(particle.pos) * sizeof(Color);
         assert(pixels_offset < grid_params.total * sizeof(Color));
