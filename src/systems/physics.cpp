@@ -21,11 +21,13 @@ void gravity_system(std::stop_token token) noexcept {
         }
         prev_time = GetTime();
         float dt = (float)delta;
+        // TODO: Fix data race
         for (auto &p : data) {
             auto &vx = p.velocity.x;
             auto &vy = p.velocity.y;
             vx += _g.x * dt;
             vy += _g.y * dt;
+            // TODO: check for boundaries
             p.pos.x += vx * dt;
             p.pos.y += vy * dt;
         }
