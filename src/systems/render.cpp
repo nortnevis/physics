@@ -75,8 +75,6 @@ static int64_t current_fps = 0;
 
 void ManualEndDrawing() noexcept {
     static double previous_time = GetTime();
-    // TODO: Make target time a global config
-    double target_time = 1.0 / global::config.fps;
 
     // flush the render batch data manually
     rlDrawRenderBatchActive();
@@ -86,8 +84,8 @@ void ManualEndDrawing() noexcept {
 
     // handle frame rate limits
     auto delta = GetTime() - previous_time;
-    if (delta < target_time) {
-        WaitTime(target_time - delta);
+    if (delta < global::config.target_frame_time) {
+        WaitTime(global::config.target_frame_time - delta);
     }
     current_fps = std::lround(1.0 / (GetTime() - previous_time));
     previous_time = GetTime();

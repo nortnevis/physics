@@ -19,9 +19,15 @@ struct Config {
     int screen_width = 800;
     int screen_height = 600;
     int fps = 60;
+    double target_frame_time = 1.0 / fps;
     Mode mode = Mode::CPU;
     GridParams grid_params;
-    float pixel_scale_factor = 70.f;
+    float pixel_scale_factor = 10.0f;
+
+    inline void update_fps(int fps) {
+        this->fps = fps;
+        this->target_frame_time = 1.0 / fps;
+    }
 };
 
 namespace global {

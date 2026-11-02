@@ -9,11 +9,9 @@ void event_handling_loop(std::stop_token token) noexcept {
     auto &data = global::particles_data;
 
     static double previous_time = GetTime();
-    // TODO: Make target time a global config
 
     Vector2 prev{0.f, 0.f};
     while (!token.stop_requested()) {
-        double target_time = 1.0 / global::config.fps;
         PollInputEvents();
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -31,8 +29,8 @@ void event_handling_loop(std::stop_token token) noexcept {
         }
 
         auto delta = GetTime() - previous_time;
-        if (delta < target_time) {
-            WaitTime(target_time - delta);
+        if (delta < global::config.target_frame_time) {
+            WaitTime(global::config.target_frame_time - delta);
         }
         previous_time = GetTime();
     }

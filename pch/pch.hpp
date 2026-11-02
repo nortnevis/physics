@@ -34,6 +34,7 @@
 #endif
 
 #include <raylib.h>
+#include <raymath.h>
 
 #define CL_HPP_TARGET_OPENCL_VERSION 300 // Specifies target OpenCL version
 #include <CL/opencl.hpp>                 // Core OpenCL C header

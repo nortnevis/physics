@@ -10,6 +10,7 @@ int main(int, char **) {
         auto &conf = global::config;
         conf.screen_width = 800;
         conf.screen_height = 600;
+        conf.update_fps(60);
         conf.grid_params.width = conf.screen_width;
         conf.grid_params.height = conf.screen_height;
         conf.grid_params.total = conf.screen_width * conf.screen_height;
