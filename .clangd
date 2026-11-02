@@ -18,7 +18,7 @@ CompileFlags:
   Remove: [-std=c++23]
 ---
 If:
-  PathMatch: (src/pch/pch|snippets/snippets_pch)\.hpp
+  PathMatch: (pch/pch|snippets/snippets_pch)\.hpp
 Diagnostics:
   UnusedIncludes: None
   ClangTidy:
