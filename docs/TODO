@@ -6,7 +6,7 @@ Plan:
 - [x] Draw the particle using the grid
 - [x] Control the particle with keys (spawning)
 - [x] Optimize CPU drawing using buffer
-- [ ] Single particle (CPU physics)
+- [x] Single particle (CPU physics)
 - [ ] Collision system (CPU physics)
 - [ ] GPU calculations for particles
 - [ ] Shaders for particle drawing
