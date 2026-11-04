@@ -14,16 +14,24 @@ void event_handling_loop(std::stop_token token) noexcept {
     while (!token.stop_requested()) {
         PollInputEvents();
 
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        if (bool alt = IsKeyDown(KEY_LEFT_ALT); IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             auto pos = GetMousePosition();
             if (pos.x < 0 || pos.y < 0 || (pos.x == prev.x && pos.y == prev.y)) {
                 continue;
             }
             if (pos.x < grid_param.width && pos.y < grid_param.height) {
-                auto dust = templates[(int)ParticleType::DUST];
-                dust.id = data.size();
-                dust.pos = pos;
-                data.push_back(std::move(dust));
+                // TODO: add mouse scrolling to change magnifier
+                int magnifier = 1000;
+                for (int i = 0; i < 1 + (magnifier - 1) * alt; ++i) {
+                    auto dust = templates[(int)ParticleType::DUST];
+                    dust.id = data.size();
+                    dust.pos = pos;
+                    if (alt) {
+                        dust.pos.x += rand_float(-5.f, 5.f);
+                        dust.pos.y += rand_float(-5.f, 5.f);
+                    }
+                    data.push_back(std::move(dust));
+                }
             }
             prev = pos;
         }
