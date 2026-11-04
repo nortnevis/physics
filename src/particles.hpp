@@ -8,8 +8,8 @@ enum class ParticleType : int {
     _count,
 };
 
-size_t as_offset(float x, float y) noexcept;
-size_t as_offset(const Vector2 &pos) noexcept;
+std::expected<size_t, std::errc> as_offset(int x, int y) noexcept;
+std::expected<size_t, std::errc> as_offset(const Vector2 &pos) noexcept;
 
 // Entity with components
 struct Particle {
