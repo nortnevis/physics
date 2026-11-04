@@ -15,7 +15,7 @@ void draw_particles() noexcept {
 
     // TODO: maybe make a shader?
     auto *pixels = (Color *)canvas_image.data;
-    // TODO: clear canvas
+    std::fill_n(pixels, canvas_image.width * canvas_image.height, get_particle_default_color(ParticleType::VOID));
     for (const auto &particle : data) {
         auto pixels_offset = as_offset(particle.pos);
         if (!pixels_offset) [[unlikely]] {
