@@ -14,15 +14,15 @@ void draw_particles() noexcept {
     static auto &data = global::particles_data;
 
     // TODO: maybe make a shader?
-    auto *pixels = (unsigned char *)canvas_image.data;
+    auto *pixels = (Color *)canvas_image.data;
     // TODO: clear canvas
     for (const auto &particle : data) {
-        size_t pixels_offset = as_offset(particle.pos) * sizeof(Color);
-        assert(pixels_offset < grid_params.total * sizeof(Color));
-        pixels[pixels_offset + 0] = particle.color.r;
-        pixels[pixels_offset + 1] = particle.color.g;
-        pixels[pixels_offset + 2] = particle.color.b;
-        pixels[pixels_offset + 3] = particle.color.a;
+        auto pixels_offset = as_offset(particle.pos);
+        if (!pixels_offset) [[unlikely]] {
+            continue;
+        }
+        assert(*pixels_offset < (size_t)grid_params.total);
+        pixels[*pixels_offset] = particle.color;
     }
 
     UpdateTexture(canvas_texture, pixels);

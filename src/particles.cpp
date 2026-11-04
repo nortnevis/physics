@@ -2,13 +2,15 @@
 
 namespace ph {
 
-size_t as_offset(float x, float y) noexcept {
-    int mul = (int)x * (int)y;
-    assert(mul < global::config.grid_params.total && mul > 0);
+std::expected<size_t, std::errc> as_offset(int x, int y) noexcept {
+    if (x >= global::config.grid_params.width || x < 0 || y >= global::config.grid_params.height || y < 0)
+        [[unlikely]] {
+        return std::unexpected(std::errc::result_out_of_range);
+    }
     return (int)y * global::config.grid_params.width + (int)x;
 }
 
-size_t as_offset(const Vector2 &pos) noexcept { return as_offset(pos.x, pos.y); }
+std::expected<size_t, std::errc> as_offset(const Vector2 &pos) noexcept { return as_offset((int)pos.x, (int)pos.y); }
 
 Color get_particle_default_color(ParticleType type) noexcept { return global::particles_templates[(int)type].color; }
 
