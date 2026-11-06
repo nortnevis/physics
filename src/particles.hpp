@@ -22,6 +22,15 @@ struct Particle {
     Vector2 velocity = {0.f, 0.f};
 };
 
+struct Buffer {
+    // TODO: Requirements:
+    // 1. each node contains vector with particles
+    // 2. each node will have atomic flag, signalling about modification of particles
+    // 3. each node has counter for particles
+    // 4. no lock, only swapping double buffers for modification (delete, editing)
+    struct Node {};
+};
+
 namespace global {
 
 inline std::vector<Particle> particles_templates{};
